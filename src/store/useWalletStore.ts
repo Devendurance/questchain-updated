@@ -20,7 +20,11 @@ interface WalletState {
 
 const walletStrategy = new WalletStrategy({
   chainId: ChainId.Testnet,
-  strategies: {},
+  endpoints: {
+    grpc: 'https://testnet.sentry.chain.grpc-web.injective.network',
+    rpc: 'https://testnet.sentry.tm.injective.network:443',
+    rest: 'https://testnet.sentry.lcd.injective.network:443',
+  },
 });
 
 export const useWalletStore = create<WalletState>((set) => ({
