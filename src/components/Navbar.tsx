@@ -11,6 +11,17 @@ export const Navbar: React.FC = () => {
   const { currentUser, setCurrentUser } = useQuestStore();
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isCheckingWallets, setIsCheckingWallets] = useState(true);
+
+  // Check available wallets when modal opens
+  useEffect(() => {
+    if (showWalletModal) {
+      setIsCheckingWallets(true);
+      checkAvailableWallets().finally(() => {
+        setIsCheckingWallets(false);
+      });
+    }
+  }, [showWalletModal, checkAvailableWallets]);
 
   const handleConnect = async (wallet: WalletEnum) => {
     try {
