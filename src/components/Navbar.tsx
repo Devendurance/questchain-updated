@@ -61,7 +61,7 @@ export const Navbar: React.FC = () => {
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2 group">
               <div className="w-10 h-10 bg-gradient-to-br from-injective-blue to-injective-cyan rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Zap className="w-6 h-6 text-white" />
+                <img src="https://productive-amethyst-vgdxfmfxgc-tmfhmz410p.edgeone.dev/logo_Injective-White@2x.png" className="w-6 h-6" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-injective-blue to-injective-cyan bg-clip-text text-transparent">
                 QuestChain
