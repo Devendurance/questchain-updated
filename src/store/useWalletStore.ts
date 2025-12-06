@@ -8,8 +8,14 @@ interface WalletState {
   address: string;
   walletStrategy: WalletStrategy | null;
   isConnected: boolean;
+  availableWallets: {
+    keplr: boolean;
+    leap: boolean;
+    evm: boolean;
+  };  // ← ADD THIS
   connect: (wallet: Wallet) => Promise<void>;
   disconnect: () => void;
+  checkAvailableWallets: () => Promise<void>;  // ← ADD THIS
 }
 
 const walletStrategy = new WalletStrategy({
@@ -18,6 +24,11 @@ const walletStrategy = new WalletStrategy({
 });
 
 export const useWalletStore = create<WalletState>((set) => ({
+  availableWallets: {
+  keplr: false,
+  leap: false,
+  evm: false,
+},
   address: '',
   walletStrategy,
   isConnected: false,
@@ -69,4 +80,19 @@ export const useWalletStore = create<WalletState>((set) => ({
   disconnect: () => {
     set({ address: '', isConnected: false });
   },
+  checkAvailableWallets: async () => {
+  const [keplrAvailable, leapAvailable, evmAvailable] = await Promise.all([
+    detectKeplr(),
+    detectLeap(),
+    detectEVM()
+  ]);
+  
+  set({
+    availableWallets: {
+      keplr: keplrAvailable,
+      leap: leapAvailable,
+      evm: evmAvailable
+    }
+  });
+},
 }));
