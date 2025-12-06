@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { WalletStrategy } from '@injectivelabs/wallet-strategy';
 import { ChainId } from '@injectivelabs/ts-types';
 import { Wallet } from '@injectivelabs/wallet-base';
-import { detectKeplr, detectLeap, detectEVM, isMobile, openWalletDeepLink } from '../utils/walletDetection';
+import { detectKeplr, detectLeap, detectEVM, isMobile, openWalletDeepLink, addInjectiveTestnetToWallet } from '../utils/walletDetection';
 
 interface WalletState {
   address: string;
@@ -67,6 +67,18 @@ export const useWalletStore = create<WalletState>((set) => ({
     if (!isAvailable) {
       console.error(`${wallet} wallet not detected. Please install the extension or use the wallet's in-app browser.`);
       return;
+    }
+    
+    // Try to add Injective Testnet chain if using Keplr or Leap
+    if (wallet === 'keplr' || wallet === 'leap') {
+      try {
+        const chainAdded = await addInjectiveTestnetToWallet(wallet);
+        if (!chainAdded) {
+          console.warn('User may have rejected adding Injective Testnet');
+        }
+      } catch (error) {
+        console.warn('Chain might already be added or user rejected:', error);
+      }
     }
     
     // Proceed with connection
