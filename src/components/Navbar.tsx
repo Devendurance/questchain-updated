@@ -55,15 +55,15 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-br from-injective-blue to-injective-cyan border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-injective-blue to-injective-cyan rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <img src="https://productive-amethyst-vgdxfmfxgc-tmfhmz410p.edgeone.dev/logo_Injective-White@2x.png" className="w-6 h-6" />
+              <div className="w-20 h-10 bg-gradient-to-br from-injective-blue to-injective-cyan rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <img src="https://productive-amethyst-vgdxfmfxgc-tmfhmz410p.edgeone.dev/logo_Injective-White@2x.png" className="w-20 h-6" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-injective-blue to-injective-cyan bg-clip-text text-transparent">
+              <span className="text-xl font-bold bg-gradient-to-r from-injective-blue to-injective-cyan bg-clip-text text-white">
                 QuestChain
               </span>
             </Link>
