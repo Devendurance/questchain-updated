@@ -20,7 +20,14 @@ interface WalletState {
 
 const walletStrategy = new WalletStrategy({
   chainId: ChainId.Testnet,
-  strategies: {},
+  strategies: {
+    [ChainId.Testnet]: {
+      chainId: ChainId.Testnet,
+      rpc: 'https://testnet.sentry.tm.injective.network:443',
+      rest: 'https://testnet.sentry.lcd.injective.network:443'
+    }
+  },
+  wallet: WalletEnum.Keplr
 });
 
 export const useWalletStore = create<WalletState>((set) => ({
