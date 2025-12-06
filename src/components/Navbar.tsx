@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Wallet, Menu, X, Zap } from 'lucide-react';
+import { Wallet, Menu, X, Zap, AlertCircle } from 'lucide-react';
 import { useWalletStore } from '../store/useWalletStore';
 import { Wallet as WalletEnum } from '@injectivelabs/wallet-base';
 import { useQuestStore } from '../store/useQuestStore';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
-  const { address, isConnected, connect, disconnect } = useWalletStore();
+  const { address, isConnected, connect, disconnect, availableWallets, checkAvailableWallets } = useWalletStore();
   const { currentUser, setCurrentUser } = useQuestStore();
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -162,46 +162,84 @@ export const Navbar: React.FC = () => {
               </button>
             </div>
 
-            <div className="space-y-3">
-              <button
-                onClick={() => handleConnect(WalletEnum.Keplr)}
-                className="w-full glass-card-hover p-4 flex items-center space-x-4"
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-injective-blue to-injective-cyan rounded-xl flex items-center justify-center">
-                  <Wallet className="w-6 h-6" />
-                </div>
-                <div className="text-left">
-                  <div className="font-semibold">Keplr</div>
-                  <div className="text-sm text-gray-400">Cosmos wallet</div>
-                </div>
-              </button>
+            {isCheckingWallets ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-injective-cyan"></div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <button
+                  onClick={() => handleConnect(WalletEnum.Keplr)}
+                  disabled={!availableWallets.keplr}
+                  className={`w-full p-4 flex items-center space-x-4 ${
+                    availableWallets.keplr
+                      ? 'glass-card-hover'
+                      : 'glass-card opacity-50 cursor-not-allowed'
+                  }`}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-injective-blue to-injective-cyan rounded-xl flex items-center justify-center">
+                    <Wallet className="w-6 h-6" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <div className="font-semibold">Keplr</div>
+                    <div className="text-sm text-gray-400">Cosmos wallet</div>
+                  </div>
+                  {!availableWallets.keplr && (
+                    <AlertCircle className="w-5 h-5 text-yellow-500" />
+                  )}
+                </button>
 
-              <button
-                onClick={() => handleConnect(WalletEnum.Leap)}
-                className="w-full glass-card-hover p-4 flex items-center space-x-4"
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                  <Wallet className="w-6 h-6" />
-                </div>
-                <div className="text-left">
-                  <div className="font-semibold">Leap</div>
-                  <div className="text-sm text-gray-400">Cosmos wallet</div>
-                </div>
-              </button>
+                <button
+                  onClick={() => handleConnect(WalletEnum.Leap)}
+                  disabled={!availableWallets.leap}
+                  className={`w-full p-4 flex items-center space-x-4 ${
+                    availableWallets.leap
+                      ? 'glass-card-hover'
+                      : 'glass-card opacity-50 cursor-not-allowed'
+                  }`}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                    <Wallet className="w-6 h-6" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <div className="font-semibold">Leap</div>
+                    <div className="text-sm text-gray-400">Cosmos wallet</div>
+                  </div>
+                  {!availableWallets.leap && (
+                    <AlertCircle className="w-5 h-5 text-yellow-500" />
+                  )}
+                </button>
 
-              <button
-                onClick={() => handleConnect(WalletEnum.Metamask)}
-                className="w-full glass-card-hover p-4 flex items-center space-x-4"
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-xl flex items-center justify-center">
-                  <Wallet className="w-6 h-6" />
-                </div>
-                <div className="text-left">
-                  <div className="font-semibold">MetaMask</div>
-                  <div className="text-sm text-gray-400">EVM wallet</div>
-                </div>
-              </button>
-            </div>
+                <button
+                  onClick={() => handleConnect(WalletEnum.Metamask)}
+                  disabled={!availableWallets.evm}
+                  className={`w-full p-4 flex items-center space-x-4 ${
+                    availableWallets.evm
+                      ? 'glass-card-hover'
+                      : 'glass-card opacity-50 cursor-not-allowed'
+                  }`}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-xl flex items-center justify-center">
+                    <Wallet className="w-6 h-6" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <div className="font-semibold">MetaMask</div>
+                    <div className="text-sm text-gray-400">EVM wallet</div>
+                  </div>
+                  {!availableWallets.evm && (
+                    <AlertCircle className="w-5 h-5 text-yellow-500" />
+                  )}
+                </button>
+
+                {!availableWallets.keplr && !availableWallets.leap && !availableWallets.evm && (
+                  <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <p className="text-sm text-yellow-500">
+                      No wallets detected. Please install a wallet extension or use your wallet's in-app browser.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
